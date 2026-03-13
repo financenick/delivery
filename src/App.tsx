@@ -6,15 +6,18 @@ import { useFilteredProducts } from './features/catalog/model/useFilteredProduct
 import { CartDrawer } from './widgets/cart-drawer/CartDrawer'
 import { CatalogSections } from './widgets/catalog-sections/CatalogSections'
 import { CategoryNav } from './widgets/category-nav/CategoryNav'
+import { DeliveryPage } from './widgets/delivery-page/DeliveryPage'
 import { Footer } from './widgets/footer/Footer'
 import { Header } from './widgets/header/Header'
 import { PromoSlider } from './widgets/promo-slider/PromoSlider'
 
 function App() {
+  const [pathname, setPathname] = useState(() => window.location.pathname || '/')
   const [search, setSearch] = useState<string>('')
   const [address, setAddress] = useState('Выберите адрес доставки или ресторана')
   const [headerHeight, setHeaderHeight] = useState(88)
   const [navHeight, setNavHeight] = useState(56)
+  const [isCompactSticky, setIsCompactSticky] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
   const navRef = useRef<HTMLElement | null>(null)
   const filteredProductsByCategory = useFilteredProducts(CATEGORIES, PRODUCTS, search)
@@ -56,36 +59,85 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setPathname(window.location.pathname || '/')
+    }
+
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsCompactSticky(window.scrollY > 180)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   const pageStyle = {
     '--header-height': `${headerHeight}px`,
     '--nav-height': `${navHeight}px`,
   } as CSSProperties
 
+  const navigateTo = (nextPath: string) => {
+    if (window.location.pathname === nextPath) return
+
+    window.history.pushState({}, '', nextPath)
+    setPathname(nextPath)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <div className="page" style={pageStyle}>
+    <div
+      className={isCompactSticky ? 'page compact-sticky' : 'page'}
+      style={pageStyle}
+    >
       <Header
         ref={headerRef}
         address={address}
         search={search}
         cartCount={cartCount}
         onAddressClick={() => setAddress('Ижевск, улица 10 лет Октября, 57')}
+        onHomeClick={() => navigateTo('/')}
         onSearchChange={setSearch}
         onCartClick={openCart}
       />
-      <PromoSlider onCatalogClick={() => scrollToCategory('sets')} />
-      <CategoryNav
-        ref={navRef}
-        categories={CATEGORIES}
-        activeCategoryId={activeCategoryId}
-        onCategoryClick={scrollToCategory}
+      {pathname === '/delivery' ? (
+        <DeliveryPage onHomeClick={() => navigateTo('/')} />
+      ) : (
+        <>
+          <PromoSlider onCatalogClick={() => scrollToCategory('sets')} />
+          <CategoryNav
+            ref={navRef}
+            categories={CATEGORIES}
+            activeCategoryId={activeCategoryId}
+            cartCount={cartCount}
+            isCompact={isCompactSticky}
+            onCategoryClick={scrollToCategory}
+            onCartClick={openCart}
+          />
+          <CatalogSections
+            categories={CATEGORIES}
+            productsByCategory={filteredProductsByCategory}
+            onAddToCart={addToCart}
+            onSectionRef={setSectionRef}
+          />
+        </>
+      )}
+      <Footer
+        onHomeClick={() => navigateTo('/')}
+        onDeliveryClick={() => navigateTo('/delivery')}
       />
-      <CatalogSections
-        categories={CATEGORIES}
-        productsByCategory={filteredProductsByCategory}
-        onAddToCart={addToCart}
-        onSectionRef={setSectionRef}
-      />
-      <Footer />
       <CartDrawer
         cart={cart}
         cartTotal={cartTotal}

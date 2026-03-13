@@ -1,8 +1,15 @@
-export function Footer() {
+type FooterProps = {
+  onHomeClick: () => void
+  onDeliveryClick: () => void
+}
+
+export function Footer({ onHomeClick, onDeliveryClick }: FooterProps) {
   return (
     <footer className="footer">
       <div className="footer-top">
-        <div className="footer-logo">Ёбидоёби</div>
+        <button className="footer-logo-button" type="button" onClick={onHomeClick}>
+          <div className="footer-logo">Ёбидоёби</div>
+        </button>
         <div className="footer-contacts">
           <div className="footer-phone-block">
             <a className="phone-number" href="tel:+78003333323">
@@ -17,7 +24,7 @@ export function Footer() {
       </div>
       <div className="footer-bottom">
         <div className="footer-links">
-          <button className="link-button" type="button">
+          <button className="link-button" type="button" onClick={onDeliveryClick}>
             Доставка и оплата
           </button>
           <button className="link-button" type="button">

@@ -5,6 +5,7 @@ type HeaderProps = {
   search: string
   cartCount: number
   onAddressClick: () => void
+  onHomeClick: () => void
   onSearchChange: (value: string) => void
   onCartClick: () => void
 }
@@ -16,6 +17,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
       search,
       cartCount,
       onAddressClick,
+      onHomeClick,
       onSearchChange,
       onCartClick,
     },
@@ -24,7 +26,9 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
     return (
       <header ref={ref} className="header">
         <div className="header-left">
-          <div className="logo">Ёбидоёби</div>
+          <button className="logo-button" type="button" onClick={onHomeClick}>
+            <div className="logo">Ёбидоёби</div>
+          </button>
           <button className="address-button" type="button" onClick={onAddressClick}>
             <span className="address-label">Адрес доставки</span>
             <span className="address-value">{address}</span>
