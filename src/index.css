@@ -683,6 +683,189 @@ body {
   font-size: 17px;
 }
 
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.checkout-form-card,
+.checkout-summary-card,
+.checkout-empty {
+  background: var(--bg-card);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.checkout-form-card,
+.checkout-summary-card {
+  padding: 24px;
+}
+
+.checkout-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.checkout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkout-section-title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.checkout-input {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text-main);
+  background: #f9fafb;
+}
+
+.checkout-input:focus {
+  outline: none;
+  border-color: var(--bg-primary);
+  background: #ffffff;
+}
+
+.checkout-textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.checkout-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  background: #f9fafb;
+}
+
+.checkout-submit {
+  align-self: flex-start;
+}
+
+.checkout-summary-header,
+.checkout-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-summary-count {
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.checkout-summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-item-main {
+  min-width: 0;
+}
+
+.checkout-item-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.checkout-item-meta {
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.checkout-item-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.checkout-summary-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-row {
+  font-size: 14px;
+}
+
+.checkout-row.total {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.checkout-empty {
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.checkout-empty-icon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+}
+
+.checkout-empty-icon.success {
+  background: rgba(255, 107, 0, 0.14);
+  color: var(--bg-primary);
+}
+
+.checkout-empty-title {
+  margin: 0 0 12px;
+  font-size: 32px;
+}
+
+.checkout-empty-text {
+  margin: 0 auto 24px;
+  max-width: 480px;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
 .footer {
   margin-top: 4px;
   padding: 16px 4px 0;
@@ -973,6 +1156,14 @@ body {
   color: var(--text-muted);
 }
 
+.cart-empty-text {
+  margin: 0 0 16px;
+}
+
+.cart-empty-button {
+  width: 100%;
+}
+
 .cart-items {
   padding: 12px 18px 8px;
   flex: 1;
@@ -1070,6 +1261,12 @@ body {
   background: var(--bg-primary-hover);
 }
 
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: #f0a77a;
+}
+
 @media (max-width: 960px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
@@ -1111,6 +1308,10 @@ body {
 
   .page-title {
     font-size: 32px;
+  }
+
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .slide {
@@ -1176,6 +1377,20 @@ body {
 
   .delivery-details {
     padding: 18px 16px;
+  }
+
+  .checkout-form-card,
+  .checkout-summary-card,
+  .checkout-empty {
+    padding: 20px 16px;
+  }
+
+  .checkout-section-title {
+    font-size: 22px;
+  }
+
+  .checkout-empty-title {
+    font-size: 28px;
   }
 
   .section-header {

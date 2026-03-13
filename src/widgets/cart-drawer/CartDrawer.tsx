@@ -8,6 +8,8 @@ type CartDrawerProps = {
   onClose: () => void
   onChangeQuantity: (productId: string, delta: number) => void
   onClearCart: () => void
+  onCheckoutClick: () => void
+  onContinueShoppingClick: () => void
 }
 
 export function CartDrawer({
@@ -17,6 +19,8 @@ export function CartDrawer({
   onClose,
   onChangeQuantity,
   onClearCart,
+  onCheckoutClick,
+  onContinueShoppingClick,
 }: CartDrawerProps) {
   return (
     <>
@@ -37,7 +41,18 @@ export function CartDrawer({
           </button>
         </div>
         {cart.length === 0 ? (
-          <div className="cart-empty">Ваша корзина пуста. Добавьте блюда из меню.</div>
+          <div className="cart-empty">
+            <p className="cart-empty-text">
+              Ваша корзина пуста. Добавьте блюда из меню.
+            </p>
+            <button
+              type="button"
+              className="primary-button cart-empty-button"
+              onClick={onContinueShoppingClick}
+            >
+              Перейти в меню
+            </button>
+          </div>
         ) : (
           <>
             <div className="cart-items">
@@ -74,7 +89,11 @@ export function CartDrawer({
                 <span>Итого</span>
                 <span className="cart-total">{formatPrice(cartTotal)}</span>
               </div>
-              <button type="button" className="primary-button">
+              <button
+                type="button"
+                className="primary-button"
+                onClick={onCheckoutClick}
+              >
                 Оформить заказ
               </button>
               <button

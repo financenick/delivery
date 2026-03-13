@@ -6,6 +6,7 @@ import { useFilteredProducts } from './features/catalog/model/useFilteredProduct
 import { CartDrawer } from './widgets/cart-drawer/CartDrawer'
 import { CatalogSections } from './widgets/catalog-sections/CatalogSections'
 import { CategoryNav } from './widgets/category-nav/CategoryNav'
+import { CheckoutPage } from './widgets/checkout-page/CheckoutPage'
 import { DeliveryPage } from './widgets/delivery-page/DeliveryPage'
 import { Footer } from './widgets/footer/Footer'
 import { Header } from './widgets/header/Header'
@@ -72,6 +73,15 @@ function App() {
   }, [])
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [pathname])
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setIsCompactSticky(false)
+      return
+    }
+
     const handleScroll = () => {
       setIsCompactSticky(window.scrollY > 180)
     }
@@ -94,12 +104,13 @@ function App() {
 
     window.history.pushState({}, '', nextPath)
     setPathname(nextPath)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  const isCatalogPage = pathname === '/'
 
   return (
     <div
-      className={isCompactSticky ? 'page compact-sticky' : 'page'}
+      className={isCatalogPage && isCompactSticky ? 'page compact-sticky' : 'page'}
       style={pageStyle}
     >
       <Header
@@ -114,6 +125,13 @@ function App() {
       />
       {pathname === '/delivery' ? (
         <DeliveryPage onHomeClick={() => navigateTo('/')} />
+      ) : pathname === '/checkout' ? (
+        <CheckoutPage
+          cart={cart}
+          cartTotal={cartTotal}
+          onHomeClick={() => navigateTo('/')}
+          onChangeQuantity={changeQuantity}
+        />
       ) : (
         <>
           <PromoSlider onCatalogClick={() => scrollToCategory('sets')} />
@@ -145,6 +163,14 @@ function App() {
         onClose={closeCart}
         onChangeQuantity={changeQuantity}
         onClearCart={clearCart}
+        onCheckoutClick={() => {
+          closeCart()
+          navigateTo('/checkout')
+        }}
+        onContinueShoppingClick={() => {
+          closeCart()
+          navigateTo('/')
+        }}
       />
     </div>
   )
