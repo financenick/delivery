@@ -683,6 +683,33 @@ body {
   font-size: 17px;
 }
 
+.about-page {
+  gap: 18px;
+}
+
+.about-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 860px;
+  color: var(--text-muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.about-copy p {
+  margin: 0;
+}
+
+.about-link {
+  color: var(--bg-primary);
+  text-decoration: none;
+}
+
+.about-link:hover {
+  text-decoration: underline;
+}
+
 .checkout-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);

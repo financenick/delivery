@@ -3,6 +3,7 @@ import { CATEGORIES, PRODUCTS } from './entities/catalog/model/data'
 import { useCart } from './features/cart/model/useCart'
 import { useCategoryNavigation } from './features/catalog/model/useCategoryNavigation'
 import { useFilteredProducts } from './features/catalog/model/useFilteredProducts'
+import { AboutPage } from './widgets/about-page/AboutPage'
 import { CartDrawer } from './widgets/cart-drawer/CartDrawer'
 import { CatalogSections } from './widgets/catalog-sections/CatalogSections'
 import { CategoryNav } from './widgets/category-nav/CategoryNav'
@@ -125,6 +126,8 @@ function App() {
       />
       {pathname === '/delivery' ? (
         <DeliveryPage onHomeClick={() => navigateTo('/')} />
+      ) : pathname === '/about' ? (
+        <AboutPage onHomeClick={() => navigateTo('/')} />
       ) : pathname === '/checkout' ? (
         <CheckoutPage
           cart={cart}
@@ -154,6 +157,7 @@ function App() {
       )}
       <Footer
         onHomeClick={() => navigateTo('/')}
+        onAboutClick={() => navigateTo('/about')}
         onDeliveryClick={() => navigateTo('/delivery')}
       />
       <CartDrawer

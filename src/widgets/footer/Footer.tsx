@@ -1,9 +1,10 @@
 type FooterProps = {
   onHomeClick: () => void
+  onAboutClick: () => void
   onDeliveryClick: () => void
 }
 
-export function Footer({ onHomeClick, onDeliveryClick }: FooterProps) {
+export function Footer({ onHomeClick, onAboutClick, onDeliveryClick }: FooterProps) {
   return (
     <footer className="footer">
       <div className="footer-top">
@@ -27,8 +28,8 @@ export function Footer({ onHomeClick, onDeliveryClick }: FooterProps) {
           <button className="link-button" type="button" onClick={onDeliveryClick}>
             Доставка и оплата
           </button>
-          <button className="link-button" type="button">
-            О компании
+          <button className="link-button" type="button" onClick={onAboutClick}>
+            О нас
           </button>
           <button className="link-button" type="button">
             Аллергены в наших блюдах
