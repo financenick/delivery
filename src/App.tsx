@@ -41,25 +41,27 @@ function App() {
     const headerElement = headerRef.current
     const navElement = navRef.current
 
-    if (!headerElement || !navElement) return
+    if (!headerElement) return
 
     const updateStickyHeights = () => {
       setHeaderHeight(headerElement.getBoundingClientRect().height)
-      setNavHeight(navElement.getBoundingClientRect().height)
+      setNavHeight(navElement?.getBoundingClientRect().height ?? 56)
     }
 
     updateStickyHeights()
 
     const resizeObserver = new ResizeObserver(updateStickyHeights)
     resizeObserver.observe(headerElement)
-    resizeObserver.observe(navElement)
+    if (navElement) {
+      resizeObserver.observe(navElement)
+    }
     window.addEventListener('resize', updateStickyHeights)
 
     return () => {
       resizeObserver.disconnect()
       window.removeEventListener('resize', updateStickyHeights)
     }
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
     const handlePopState = () => {
@@ -93,7 +95,7 @@ function App() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [pathname])
 
   const pageStyle = {
     '--header-height': `${headerHeight}px`,
