@@ -5,7 +5,9 @@ export function Footer() {
         <div className="footer-logo">Ёбидоёби</div>
         <div className="footer-contacts">
           <div className="footer-phone-block">
-            <span className="phone-number">+7 (800) 333-33-23</span>
+            <a className="phone-number" href="tel:+78003333323">
+              +7 (800) 333-33-23
+            </a>
             <span className="phone-caption">Ежедневно с 10:00 до 23:00</span>
           </div>
           <div className="footer-address">

@@ -40,7 +40,9 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
         </div>
         <div className="header-right">
           <div className="header-phone">
-            <span className="phone-number">+7 (800) 333-33-23</span>
+            <a className="phone-number" href="tel:+78003333323">
+              +7 (800) 333-33-23
+            </a>
             <span className="phone-caption">Звонок бесплатный</span>
           </div>
           <button className="cart-button" type="button" onClick={onCartClick}>
