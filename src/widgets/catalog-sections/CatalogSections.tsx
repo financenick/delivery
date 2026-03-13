@@ -19,8 +19,10 @@ export function CatalogSections({
   const timersRef = useRef<Record<string, number>>({})
 
   useEffect(() => {
+    const timers = timersRef.current
+
     return () => {
-      for (const timer of Object.values(timersRef.current)) {
+      for (const timer of Object.values(timers)) {
         window.clearTimeout(timer)
       }
     }

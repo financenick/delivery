@@ -19,7 +19,7 @@ function App() {
   const [address, setAddress] = useState('Выберите адрес доставки или ресторана')
   const [headerHeight, setHeaderHeight] = useState(88)
   const [navHeight, setNavHeight] = useState(56)
-  const [isCompactSticky, setIsCompactSticky] = useState(false)
+  const [isCatalogScrolled, setIsCatalogScrolled] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
   const navRef = useRef<HTMLElement | null>(null)
   const filteredProductsByCategory = useFilteredProducts(CATEGORIES, PRODUCTS, search)
@@ -80,13 +80,10 @@ function App() {
   }, [pathname])
 
   useEffect(() => {
-    if (pathname !== '/') {
-      setIsCompactSticky(false)
-      return
-    }
+    if (pathname !== '/') return
 
     const handleScroll = () => {
-      setIsCompactSticky(window.scrollY > 180)
+      setIsCatalogScrolled(window.scrollY > 180)
     }
 
     handleScroll()
@@ -110,6 +107,7 @@ function App() {
   }
 
   const isCatalogPage = pathname === '/'
+  const isCompactSticky = isCatalogPage && isCatalogScrolled
 
   return (
     <div
