@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { formatPrice } from '../../entities/catalog/lib/formatPrice'
 import type { Category, Product } from '../../entities/catalog/model/types'
 
@@ -14,6 +15,36 @@ export function CatalogSections({
   onAddToCart,
   onSectionRef,
 }: CatalogSectionsProps) {
+  const [addedProductIds, setAddedProductIds] = useState<Record<string, boolean>>({})
+  const timersRef = useRef<Record<string, number>>({})
+
+  useEffect(() => {
+    return () => {
+      for (const timer of Object.values(timersRef.current)) {
+        window.clearTimeout(timer)
+      }
+    }
+  }, [])
+
+  const handleAddToCartClick = (product: Product) => {
+    onAddToCart(product)
+
+    if (timersRef.current[product.id]) {
+      window.clearTimeout(timersRef.current[product.id])
+    }
+
+    setAddedProductIds((prev) => ({ ...prev, [product.id]: true }))
+
+    timersRef.current[product.id] = window.setTimeout(() => {
+      setAddedProductIds((prev) => {
+        const next = { ...prev }
+        delete next[product.id]
+        return next
+      })
+      delete timersRef.current[product.id]
+    }, 1400)
+  }
+
   return (
     <main className="main">
       <div className="content">
@@ -67,10 +98,14 @@ export function CatalogSections({
                         <div className="product-price">{formatPrice(product.price)}</div>
                         <button
                           type="button"
-                          className="add-to-cart-button"
-                          onClick={() => onAddToCart(product)}
+                          className={
+                            addedProductIds[product.id]
+                              ? 'add-to-cart-button added'
+                              : 'add-to-cart-button'
+                          }
+                          onClick={() => handleAddToCartClick(product)}
                         >
-                          В корзину
+                          {addedProductIds[product.id] ? 'Добавлено' : 'В корзину'}
                         </button>
                       </div>
                     </article>

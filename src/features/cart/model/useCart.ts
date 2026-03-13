@@ -28,7 +28,6 @@ export function useCart() {
       }
       return [...prev, { product, quantity: 1 }]
     })
-    setIsCartOpen(true)
   }
 
   const changeQuantity = (productId: string, delta: number) => {
