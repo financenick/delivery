@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { CATEGORIES, PRODUCTS } from './entities/catalog/model/data'
 import { useCart } from './features/cart/model/useCart'
+import { useCatalog } from './features/catalog/model/useCatalog'
 import { useCategoryNavigation } from './features/catalog/model/useCategoryNavigation'
 import { useFilteredProducts } from './features/catalog/model/useFilteredProducts'
 import { AboutPage } from './widgets/about-page/AboutPage'
@@ -22,7 +22,8 @@ function App() {
   const [isCompactSticky, setIsCompactSticky] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
   const navRef = useRef<HTMLElement | null>(null)
-  const filteredProductsByCategory = useFilteredProducts(CATEGORIES, PRODUCTS, search)
+  const { categories, products, isLoading: isCatalogLoading } = useCatalog()
+  const filteredProductsByCategory = useFilteredProducts(categories, products, search)
   const {
     cart,
     cartCount,
@@ -35,7 +36,7 @@ function App() {
     closeCart,
   } = useCart()
   const { activeCategoryId, scrollToCategory, setSectionRef } =
-    useCategoryNavigation(CATEGORIES)
+    useCategoryNavigation(categories)
 
   useEffect(() => {
     const headerElement = headerRef.current
@@ -142,19 +143,28 @@ function App() {
           <PromoSlider onCatalogClick={() => scrollToCategory('sets')} />
           <CategoryNav
             ref={navRef}
-            categories={CATEGORIES}
+            categories={categories}
             activeCategoryId={activeCategoryId}
             cartCount={cartCount}
             isCompact={isCompactSticky}
             onCategoryClick={scrollToCategory}
             onCartClick={openCart}
           />
-          <CatalogSections
-            categories={CATEGORIES}
-            productsByCategory={filteredProductsByCategory}
-            onAddToCart={addToCart}
-            onSectionRef={setSectionRef}
-          />
+          {isCatalogLoading ? (
+            <section className="product-section catalog-status">
+              <h2 className="catalog-status-title">Загружаем каталог</h2>
+              <p className="catalog-status-text">
+                Подготавливаем категории и карточки товаров.
+              </p>
+            </section>
+          ) : (
+            <CatalogSections
+              categories={categories}
+              productsByCategory={filteredProductsByCategory}
+              onAddToCart={addToCart}
+              onSectionRef={setSectionRef}
+            />
+          )}
         </>
       )}
       <Footer

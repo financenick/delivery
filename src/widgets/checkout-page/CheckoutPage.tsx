@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { formatPrice } from '../../entities/catalog/lib/formatPrice'
+import { buildCreateOrderRequest } from '../../entities/order/lib/buildCreateOrderRequest'
+import type { PaymentMethodDto } from '../../entities/order/api/contracts'
+import type { CheckoutFormValues } from '../../entities/order/model/types'
 import type { CartItem } from '../../features/cart/model/types'
 
 type CheckoutPageProps = {
@@ -62,7 +65,7 @@ export function CheckoutPage({
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [comment, setComment] = useState('')
-  const [payment, setPayment] = useState<'cash' | 'card'>('card')
+  const [payment, setPayment] = useState<PaymentMethodDto>('card')
   const [isSubmitted, setIsSubmitted] = useState(false)
   const isPhoneValid = hasValidRussianPhone(phone)
 
@@ -119,6 +122,14 @@ export function CheckoutPage({
           className="checkout-form-card"
           onSubmit={(event) => {
             event.preventDefault()
+            const orderPayload: CheckoutFormValues = {
+              customerName: name,
+              customerPhone: phone,
+              deliveryAddress: address,
+              comment,
+              paymentMethod: payment,
+            }
+            void buildCreateOrderRequest(orderPayload, cart)
             setIsSubmitted(true)
           }}
         >

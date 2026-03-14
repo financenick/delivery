@@ -8,6 +8,21 @@ export function useCategoryNavigation(categories: Category[]) {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
 
   useEffect(() => {
+    if (!categories.length) {
+      setActiveCategoryId('')
+      return
+    }
+
+    const hasActiveCategory = categories.some(
+      (category) => category.id === activeCategoryId,
+    )
+
+    if (!hasActiveCategory) {
+      setActiveCategoryId(categories[0].id)
+    }
+  }, [activeCategoryId, categories])
+
+  useEffect(() => {
     const elements = categories
       .map((category) => sectionRefs.current[category.id])
       .filter((element): element is HTMLElement => Boolean(element))
