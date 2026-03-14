@@ -34,7 +34,7 @@ function App() {
     clearCart,
     openCart,
     closeCart,
-  } = useCart()
+  } = useCart(products)
   const { activeCategoryId, scrollToCategory, setSectionRef } =
     useCategoryNavigation(categories)
 
@@ -137,6 +137,7 @@ function App() {
           cartTotal={cartTotal}
           onHomeClick={() => navigateTo('/')}
           onChangeQuantity={changeQuantity}
+          onOrderCreated={clearCart}
         />
       ) : (
         <>
