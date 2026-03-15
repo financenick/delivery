@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatPrice } from '../../entities/catalog/lib/formatPrice'
 import type { Category, Product } from '../../entities/catalog/model/types'
+import { ProductModal } from '../product-modal/ProductModal'
 
 type CatalogSectionsProps = {
   categories: Category[]
@@ -16,11 +17,14 @@ export function CatalogSections({
   onSectionRef,
 }: CatalogSectionsProps) {
   const [addedProductIds, setAddedProductIds] = useState<Record<string, boolean>>({})
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const timersRef = useRef<Record<string, number>>({})
 
   useEffect(() => {
+    const timers = timersRef.current
+
     return () => {
-      for (const timer of Object.values(timersRef.current)) {
+      for (const timer of Object.values(timers)) {
         window.clearTimeout(timer)
       }
     }
@@ -78,22 +82,34 @@ export function CatalogSections({
                 <div className="product-grid">
                   {products.map((product) => (
                     <article key={product.id} className="product-card">
-                      <div className="product-image-placeholder" aria-hidden="true">
-                        <span>Картинка-заглушка</span>
-                      </div>
-                      <div className="product-content">
-                        {product.badge && (
-                          <div className="product-badge">{product.badge}</div>
-                        )}
-                        <h2 className="product-name">{product.name}</h2>
-                        <div className="product-weight">{product.weight}</div>
-                        {product.description && (
-                          <p className="product-description">{product.description}</p>
-                        )}
-                        {product.details && (
-                          <p className="product-details">{product.details}</p>
-                        )}
-                      </div>
+                      <button
+                        type="button"
+                        className="product-card-main"
+                        onClick={() => setSelectedProduct(product)}
+                      >
+                        <div className="product-image-placeholder" aria-hidden="true">
+                          {product.image ? (
+                            <img
+                              className="product-image"
+                              src={product.image}
+                              alt={product.name}
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span>Картинка-заглушка</span>
+                          )}
+                        </div>
+                        <div className="product-content">
+                          {product.badge && (
+                            <div className="product-badge">{product.badge}</div>
+                          )}
+                          <h2 className="product-name">{product.name}</h2>
+                          <div className="product-weight">{product.weight}</div>
+                          {product.description && (
+                            <p className="product-description">{product.description}</p>
+                          )}
+                        </div>
+                      </button>
                       <div className="product-footer">
                         <div className="product-price">{formatPrice(product.price)}</div>
                         <button
@@ -119,6 +135,12 @@ export function CatalogSections({
           )
         })}
       </div>
+      <ProductModal
+        product={selectedProduct}
+        isAdded={selectedProduct ? Boolean(addedProductIds[selectedProduct.id]) : false}
+        onClose={() => setSelectedProduct(null)}
+        onAddToCart={handleAddToCartClick}
+      />
     </main>
   )
 }

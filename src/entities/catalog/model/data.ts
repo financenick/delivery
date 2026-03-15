@@ -1,4 +1,9 @@
 import type { Category, Product } from './types'
+import set1Image from '../../../assets/sushi/Сет1.png'
+import set2Image from '../../../assets/sushi/Сет2.png'
+import set3Image from '../../../assets/sushi/Сет3.png'
+import set4Image from '../../../assets/sushi/Сет4.png'
+import set5Image from '../../../assets/sushi/Сет5 увел.png'
 
 export const CATEGORIES: Category[] = [
   { id: 'sets', name: 'Наборы' },
@@ -18,6 +23,7 @@ export const PRODUCTS: Product[] = [
     id: 'set-himitsu',
     categoryId: 'sets',
     name: 'Химицу',
+    image: set1Image,
     weight: '1 220 г',
     price: 1349,
     description: 'Сет роллов с мидиями, крабом, лососем и том ям.',
@@ -29,6 +35,7 @@ export const PRODUCTS: Product[] = [
     id: 'set-ma-sik',
     categoryId: 'sets',
     name: 'Ма Сик',
+    image: set2Image,
     weight: '1 480 г',
     price: 1699,
     description:
@@ -40,6 +47,7 @@ export const PRODUCTS: Product[] = [
     id: 'set-hikoki',
     categoryId: 'sets',
     name: 'Хикоки',
+    image: set3Image,
     weight: '2 870 г',
     price: 2999,
     description:
@@ -51,6 +59,7 @@ export const PRODUCTS: Product[] = [
     id: 'set-premium-for-two',
     categoryId: 'sets',
     name: 'Премиум для двоих',
+    image: set4Image,
     weight: '575 г',
     price: 2399,
     description: 'Стартовый набор успешного свидания.',
@@ -60,6 +69,7 @@ export const PRODUCTS: Product[] = [
     id: 'set-premium',
     categoryId: 'sets',
     name: 'Премиум',
+    image: set5Image,
     weight: '1 045 г',
     price: 2899,
     description: 'Набор роллов с лососем, морепродуктами и икрой.',
