@@ -1,5 +1,12 @@
 import { useState } from 'react'
 import { formatPrice } from '../../entities/catalog/lib/formatPrice'
+import {
+  CreateOrderError,
+  createOrder,
+} from '../../entities/order/api/createOrder'
+import { buildCreateOrderRequest } from '../../entities/order/lib/buildCreateOrderRequest'
+import type { PaymentMethodDto } from '../../entities/order/api/contracts'
+import type { CheckoutFormValues } from '../../entities/order/model/types'
 import type { CartItem } from '../../features/cart/model/types'
 
 type CheckoutPageProps = {
@@ -7,6 +14,7 @@ type CheckoutPageProps = {
   cartTotal: number
   onHomeClick: () => void
   onChangeQuantity: (productId: string, delta: number) => void
+  onOrderCreated: () => void
 }
 
 function formatRussianPhone(value: string) {
@@ -52,34 +60,47 @@ function hasValidRussianPhone(value: string) {
   return value.replace(/\D/g, '').length === 11
 }
 
+function getOrderErrorMessage(error: unknown) {
+  if (error instanceof CreateOrderError) {
+    if (
+      error.status === 400 &&
+      error.detail?.includes('Товар недоступен или больше не существует')
+    ) {
+      return 'Часть товаров в корзине уже недоступна. Корзина обновлена, проверьте состав заказа и отправьте его снова.'
+    }
+
+    if (error.status === 400 && error.detail) {
+      return `Не удалось оформить заказ: ${error.detail}`
+    }
+
+    if (error.status >= 500) {
+      return 'Сервис временно недоступен. Попробуйте отправить заказ еще раз через пару минут.'
+    }
+
+    if (error.status === 0) {
+      return 'Не удалось связаться с сервером. Проверьте, что frontend и backend запущены и соединены между собой.'
+    }
+  }
+
+  return 'Не удалось отправить заказ. Проверьте подключение к серверу и попробуйте еще раз.'
+}
+
 export function CheckoutPage({
   cart,
   cartTotal,
   onHomeClick,
   onChangeQuantity,
+  onOrderCreated,
 }: CheckoutPageProps) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [comment, setComment] = useState('')
-  const [payment, setPayment] = useState<'cash' | 'card'>('card')
+  const [payment, setPayment] = useState<PaymentMethodDto>('card')
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const isPhoneValid = hasValidRussianPhone(phone)
-
-  if (cart.length === 0) {
-    return (
-      <main className="checkout-empty">
-        <div className="checkout-empty-icon">🛍</div>
-        <h1 className="checkout-empty-title">Корзина пуста</h1>
-        <p className="checkout-empty-text">
-          Добавьте товары в корзину, чтобы оформить заказ.
-        </p>
-        <button type="button" className="primary-button" onClick={onHomeClick}>
-          Перейти в меню
-        </button>
-      </main>
-    )
-  }
 
   if (isSubmitted) {
     return (
@@ -92,6 +113,21 @@ export function CheckoutPage({
         </p>
         <button type="button" className="primary-button" onClick={onHomeClick}>
           Вернуться в меню
+        </button>
+      </main>
+    )
+  }
+
+  if (cart.length === 0) {
+    return (
+      <main className="checkout-empty">
+        <div className="checkout-empty-icon">🛍</div>
+        <h1 className="checkout-empty-title">Корзина пуста</h1>
+        <p className="checkout-empty-text">
+          Добавьте товары в корзину, чтобы оформить заказ.
+        </p>
+        <button type="button" className="primary-button" onClick={onHomeClick}>
+          Перейти в меню
         </button>
       </main>
     )
@@ -117,9 +153,30 @@ export function CheckoutPage({
       <section className="checkout-layout">
         <form
           className="checkout-form-card"
-          onSubmit={(event) => {
+          onSubmit={async (event) => {
             event.preventDefault()
-            setIsSubmitted(true)
+
+            const orderPayload: CheckoutFormValues = {
+              customerName: name,
+              customerPhone: phone,
+              deliveryAddress: address,
+              comment,
+              paymentMethod: payment,
+            }
+
+            setSubmitError(null)
+            setIsSubmitting(true)
+
+            try {
+              await createOrder(buildCreateOrderRequest(orderPayload, cart))
+              onOrderCreated()
+              setIsSubmitted(true)
+            } catch (error) {
+              console.error('Failed to create order.', error)
+              setSubmitError(getOrderErrorMessage(error))
+            } finally {
+              setIsSubmitting(false)
+            }
           }}
         >
           <div className="checkout-section">
@@ -192,12 +249,18 @@ export function CheckoutPage({
             </label>
           </div>
 
+          {submitError ? (
+            <p className="checkout-error-message" role="alert">
+              {submitError}
+            </p>
+          ) : null}
+
           <button
             type="submit"
             className="primary-button checkout-submit"
-            disabled={!isPhoneValid}
+            disabled={!isPhoneValid || isSubmitting}
           >
-            Подтвердить заказ
+            {isSubmitting ? 'Отправляем заказ...' : 'Подтвердить заказ'}
           </button>
         </form>
 

@@ -31,9 +31,35 @@ function readCartFromStorage(): CartItem[] {
   }
 }
 
-export function useCart() {
+function syncCartWithCatalog(cart: CartItem[], products: Product[]): CartItem[] {
+  if (products.length === 0) {
+    return cart
+  }
+
+  const productsById = new Map(products.map((product) => [product.id, product]))
+
+  return cart.flatMap((item) => {
+    const actualProduct = productsById.get(item.product.id)
+    if (!actualProduct) {
+      return []
+    }
+
+    return [
+      {
+        ...item,
+        product: actualProduct,
+      },
+    ]
+  })
+}
+
+export function useCart(products: Product[]) {
   const [cart, setCart] = useState<CartItem[]>(() => readCartFromStorage())
   const [isCartOpen, setIsCartOpen] = useState(false)
+
+  useEffect(() => {
+    setCart((prev) => syncCartWithCatalog(prev, products))
+  }, [products])
 
   useEffect(() => {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
