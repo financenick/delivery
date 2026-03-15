@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
 import type { Category } from '../../entities/catalog/model/types'
 
 type CategoryNavProps = {
@@ -22,6 +22,19 @@ export const CategoryNav = forwardRef<HTMLElement, CategoryNavProps>(
     },
     ref,
   ) => {
+    const categoryButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+
+    useEffect(() => {
+      const activeButton = categoryButtonRefs.current[activeCategoryId]
+      if (!activeButton) return
+
+      activeButton.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      })
+    }, [activeCategoryId])
+
     return (
       <nav
         ref={ref}
@@ -33,6 +46,9 @@ export const CategoryNav = forwardRef<HTMLElement, CategoryNavProps>(
             <button
               key={category.id}
               type="button"
+              ref={(element) => {
+                categoryButtonRefs.current[category.id] = element
+              }}
               className={
                 category.id === activeCategoryId
                   ? 'nav-category active'
