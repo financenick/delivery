@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Category } from '../../../entities/catalog/model/types'
 
-export function useCategoryNavigation(categories: Category[]) {
+export function useCategoryNavigation(
+  categories: Category[],
+  isEnabled: boolean,
+) {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
     categories[0]?.id ?? '',
   )
@@ -23,9 +26,14 @@ export function useCategoryNavigation(categories: Category[]) {
   }, [activeCategoryId, categories])
 
   useEffect(() => {
+    if (!isEnabled) return
+
     const elements = categories
       .map((category) => sectionRefs.current[category.id])
-      .filter((element): element is HTMLElement => Boolean(element))
+      .filter(
+        (element): element is HTMLElement =>
+          element !== null && element.isConnected,
+      )
 
     if (elements.length === 0) return
 
@@ -54,7 +62,7 @@ export function useCategoryNavigation(categories: Category[]) {
     }
 
     return () => observer.disconnect()
-  }, [categories])
+  }, [categories, isEnabled])
 
   const setSectionRef = (categoryId: string, element: HTMLElement | null) => {
     sectionRefs.current[categoryId] = element
@@ -64,6 +72,7 @@ export function useCategoryNavigation(categories: Category[]) {
     const element = sectionRefs.current[categoryId]
     if (!element) return
 
+    setActiveCategoryId(categoryId)
     element.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 

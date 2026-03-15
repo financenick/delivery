@@ -35,8 +35,9 @@ function App() {
     openCart,
     closeCart,
   } = useCart(products)
+  const isCatalogPage = pathname === '/'
   const { activeCategoryId, scrollToCategory, setSectionRef } =
-    useCategoryNavigation(categories)
+    useCategoryNavigation(categories, isCatalogPage)
 
   useEffect(() => {
     const headerElement = headerRef.current
@@ -109,8 +110,6 @@ function App() {
     window.history.pushState({}, '', nextPath)
     setPathname(nextPath)
   }
-
-  const isCatalogPage = pathname === '/'
 
   return (
     <div
